@@ -1,21 +1,37 @@
-const path = require('path');
 const express = require('express');
+const { google } = require('googleapis');
 
-const app = express();
+/* 先ほど取得したAPIキーを設定する */
+const YOUTUBE_API_KEY = 'AIzaSyAqBnI8Cfwqo0a0qiMJ9K8Kto0CnRjrMNU';
+
+const youtube = google.youtube({
+  version: 'v3',
+  auth: YOUTUBE_API_KEY,
+});
+
 const router = express.Router();
 
-/* 3000番ポートで待ち受け */
-const server = app.listen(3000, () => {
-  console.log(`Node.js is listening to PORT: ${server.address().port}`);
+router.get('/videos/search/:keyword', (req, res, next) => {
+  const { keyword } = req.params;
+  const { pageToken } = req.query;
+  (async () => {
+    // 検索結果を動画IDで取得
+    const { data: { items: idItems, nextPageToken } } = await youtube.search.list({
+      part: 'id',
+      q: keyword,
+      type: 'video',
+      maxResults: 20,
+      pageToken,
+    });
+    // 動画の情報を取得
+    const ids = idItems.map(({ id: { videoId } }) => videoId);
+    const { data: { items } } = await youtube.videos.list({
+      part: 'statistics,snippet',
+      id: ids.join(','),
+    });
+    res.json({ items, nextPageToken });
+  })().catch(next);
+
 });
 
-app.use('/api', require('./api')); 
-
-// 静的ファイルのルーティング
-router.use(express.static('public'));
-
-router.get('*', (req, res, next) => {
-  res.sendFile(path.join(__dirname, './public/index.html'));
-});
-
-app.use('/', router);
+module.exports = router;
