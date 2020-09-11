@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+// 追加する
+import useOnScrollEnd from '~/utils/useOnScrollEnd';
 
 const Root = styled.div`
   width: 100%;
@@ -29,28 +31,8 @@ const VideosListTemplate = ({
   videosListContents,
   onScrollEnd,
 }) => {
-  useEffect(() => {
-    if (!onScrollEnd) {
-      return;
-    }
-    // スクロール時のイベントハンドラ
-    const scrollHandler = ({ target: { scrollingElement } }) => {
-      // 一番下までスクロールされたかどうか判定し、一番下までスクロールされたらonScrollEndを呼び出す
-      const { scrollTop, scrollHeight, clientHeight } = scrollingElement;
-      if (scrollTop < scrollHeight - clientHeight) {
-        // スクロールした位置が一番下でない場合は何もしない
-        return;
-      }
-      // onScrollEnd呼び出し
-      onScrollEnd();
-    };
-    // イベントハンドラの設定
-    window.document.addEventListener('scroll', scrollHandler);
-    return () => {
-      // コンポーネントのアンマウント時に設定したイベントハンドラを削除する
-      window.document.removeEventListener('scroll', scrollHandler);
-    };
-  }, [onScrollEnd]);
+  // 修正する
+  useOnScrollEnd(onScrollEnd);
   return (
     <Root>
       <HeaderWrapper>
