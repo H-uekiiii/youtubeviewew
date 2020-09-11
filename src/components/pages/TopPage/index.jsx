@@ -21,7 +21,7 @@ export const TopPagePresenter = ({
     searchFormContents={(
       <SearchForm onSubmit={search} defaultValue={defaultKeyword} />
     )}
-    videosListContents={<VideosList videos={videos} loading={loading} />}
+    videosListContents={<VideosList videos={videos} loading={loading} withFavoriteButton />}
     onScrollEnd={searchNext}
   />
 );
@@ -40,7 +40,6 @@ TopPagePresenter.defaultProps = {
   defaultKeyword: '',
 };
 
-// ここから追加修正
 const TopPageContainer = ({
   api,
   presenter,
@@ -70,7 +69,7 @@ const TopPageContainer = ({
     }
     let nextVideos;
     if (pageToken) {
-      // 重複を取り除く
+      
       const itemsWithoutDuplicated = items.filter(
         ({ id: itemId }) => !videos.find(({ id }) => id === itemId),
       );
@@ -83,14 +82,12 @@ const TopPageContainer = ({
     setLoading(false);
   };
 
-  // keywordが変更されたらビデオ取得する
   useEffect(() => {
     setNextPageToken(undefined);
     setVideos([]);
     getVideos();
   }, [keyword]);
 
-  // コンポーネントがunmountされたらそれを覚えておく
   useEffect(() => (() => {
     cleanedUp.current = true;
   }), []);
@@ -99,7 +96,7 @@ const TopPageContainer = ({
     search: setKeyword,
     searchNext: () => {
       if (loading || !nextPageToken) {
-        // 現在ロード中、または次のページがない場合は何もしない
+      
         return;
       }
       getVideos(nextPageToken);

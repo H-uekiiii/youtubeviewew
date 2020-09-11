@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-// 追加する
 import useOnScrollEnd from '~/utils/useOnScrollEnd';
 
 const Root = styled.div`
@@ -13,6 +12,11 @@ const HeaderWrapper = styled.div`
   max-width: 720px;
   margin: auto;
   border-bottom: 1px solid #ccc;
+`;
+
+const TitleWrapper = styled.div`
+  max-width: 720px;
+  margin: auto;
 `;
 
 const SearchFormWrapper = styled.div`
@@ -27,6 +31,7 @@ const VideosListWrapper = styled.div`
 
 const VideosListTemplate = ({
   headerContents,
+  titleContents,
   searchFormContents,
   videosListContents,
   onScrollEnd,
@@ -38,6 +43,9 @@ const VideosListTemplate = ({
       <HeaderWrapper>
         {headerContents}
       </HeaderWrapper>
+      <TitleWrapper>
+        {titleContents}
+      </TitleWrapper>
       <SearchFormWrapper>
         {searchFormContents}
       </SearchFormWrapper>
@@ -50,6 +58,7 @@ const VideosListTemplate = ({
 
 VideosListTemplate.propTypes = {
   headerContents: PropTypes.node,
+  titleContents: PropTypes.node,
   searchFormContents: PropTypes.node,
   videosListContents: PropTypes.node.isRequired,
   onScrollEnd: PropTypes.func,
@@ -57,6 +66,7 @@ VideosListTemplate.propTypes = {
 
 VideosListTemplate.defaultProps = {
   headerContents: null,
+  titleContents: null,
   searchFormContents: null,
   onScrollEnd: null,
 };
